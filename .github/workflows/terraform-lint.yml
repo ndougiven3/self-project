@@ -1,0 +1,58 @@
+name: Terraform Linting & Formatting
+
+on:
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Terraform Lint & Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.0  # choose the version your Terraform Cloud workspace uses
+
+      # Format check
+      - name: Check Terraform formatting
+        run: terraform fmt -check -recursive
+
+      # Validate Terraform configuration
+      - name: Terraform init
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      # Install TFLint
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+
+      # Run TFLint
+      - name: Run TFLint
+        run: |
+          tflint --init
+          tflint
+
+  security:
+    name: Terraform Security Scan
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.3
