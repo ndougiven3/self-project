@@ -7,7 +7,7 @@ resource "aws_s3_bucket" "example" {
 }
 
 resource "aws_s3_bucket" "amplify-wheelspin-staging-155819-deployment" {
-  bucket        = "amplify-wheelspin-staging-155819-deployment"
+  bucket = "amplify-wheelspin-staging-155819-deployment"
 
   # Grants
   grant {
@@ -23,7 +23,7 @@ resource "aws_s3_bucket" "amplify-wheelspin-staging-155819-deployment" {
   }
   tags = {
     "user:Application" = "wheelspin"
-    "user:Stack" = "staging"
+    "user:Stack"       = "staging"
   }
 
   # Encryption
